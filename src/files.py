@@ -20,3 +20,21 @@ def write_bytes(path, data):
             handle.write(data)
     except OSError as err:
         raise FileError(f"не удалось записать {path}: {err}") from err
+
+
+def read_bytes(path):
+    """Читает двоичный файл целиком."""
+    try:
+        with open(path, "rb") as handle:
+            return handle.read()
+    except OSError as err:
+        raise FileError(f"не удалось прочитать {path}: {err}") from err
+
+
+def write_text(path, text):
+    """Записывает текстовый файл в кодировке UTF-8."""
+    try:
+        with open(path, "w", encoding="utf-8", newline="") as handle:
+            handle.write(text)
+    except OSError as err:
+        raise FileError(f"не удалось записать {path}: {err}") from err

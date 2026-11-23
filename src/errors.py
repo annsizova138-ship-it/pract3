@@ -15,3 +15,7 @@ class AsmError(UvmError):
 
 class FileError(UvmError):
     """Файл невозможно прочитать или записать."""
+
+
+class VmError(UvmError):
+    """Ошибка при выполнении программы виртуальной машиной."""
