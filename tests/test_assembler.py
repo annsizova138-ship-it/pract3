@@ -23,20 +23,31 @@ def run_main(*argv):
 class AssemblerCliTests(unittest.TestCase):
     """Проверки main."""
 
-    def test_test_mode_prints_fields(self):
-        """Режим тестирования выводит поля и значения команд."""
-        code, out, _ = run_main(
-            "--source", SPEC_FILE, "--output", "out.bin", "--test")
+    def test_test_mode_prints_bytes(self):
+        """Режим тестирования выводит байты, как в спецификации."""
+        with tempfile.TemporaryDirectory() as folder:
+            output = os.path.join(folder, "out.bin")
+            code, out, _ = run_main(
+                "--source", SPEC_FILE, "--output", output, "--test")
         self.assertEqual(code, EXIT_OK)
-        self.assertEqual(
-            out.splitlines(),
-            ["A=44, B=260", "A=223, B=574", "A=174, B=152", "A=169, B=113"])
+        self.assertEqual(out.splitlines()[:4], [
+            "0x2C, 0x04, 0x01, 0x00, 0x00",
+            "0xDF, 0x3E, 0x02, 0x00, 0x00",
+            "0xAE, 0x98, 0x00, 0x00, 0x00",
+            "0xA9, 0x71, 0x00, 0x00, 0x00"])
 
-    def test_normal_mode(self):
-        """Без режима тестирования выводится число команд."""
-        code, out, _ = run_main("--source", SPEC_FILE, "--output", "out.bin")
+    def test_binary_file_and_size(self):
+        """Двоичный файл записан, его размер выведен."""
+        with tempfile.TemporaryDirectory() as folder:
+            output = os.path.join(folder, "out.bin")
+            code, out, _ = run_main(
+                "--source", SPEC_FILE, "--output", output)
+            with open(output, "rb") as handle:
+                data = handle.read()
         self.assertEqual(code, EXIT_OK)
-        self.assertIn("4", out)
+        self.assertEqual(len(data), 20)
+        self.assertEqual(data[:5], bytes([0x2C, 0x04, 0x01, 0x00, 0x00]))
+        self.assertIn("Размер двоичного файла: 20 байт", out)
 
     def test_parameter_errors(self):
         """Ошибки параметров: сообщение и код 2."""

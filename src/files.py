@@ -11,3 +11,12 @@ def read_text(path):
             return handle.read()
     except (OSError, UnicodeDecodeError) as err:
         raise FileError(f"не удалось прочитать {path}: {err}") from err
+
+
+def write_bytes(path, data):
+    """Записывает двоичный файл."""
+    try:
+        with open(path, "wb") as handle:
+            handle.write(data)
+    except OSError as err:
+        raise FileError(f"не удалось записать {path}: {err}") from err

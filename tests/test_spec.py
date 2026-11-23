@@ -1,7 +1,8 @@
-"""Тесты из спецификации УВМ: промежуточное представление."""
+"""Тесты из спецификации УВМ: промежуточное представление и байты."""
 import os
 import unittest
 
+from encoding import encode_program
 from files import read_text
 from spec import Command
 from syntax import parse_program
@@ -30,6 +31,17 @@ class SpecTests(unittest.TestCase):
         for line, expected in zip(lines, SPEC_COMMANDS):
             with self.subTest(line):
                 self.assertEqual(parse_program(line), [expected])
+
+    def test_spec_file_bytes(self):
+        """Файл examples/spec_tests.asm даёт байты из спецификации."""
+        text = read_text(os.path.join(EXAMPLES, "spec_tests.asm"))
+        expected = bytes([
+            0x2C, 0x04, 0x01, 0x00, 0x00,
+            0xDF, 0x3E, 0x02, 0x00, 0x00,
+            0xAE, 0x98, 0x00, 0x00, 0x00,
+            0xA9, 0x71, 0x00, 0x00, 0x00,
+        ])
+        self.assertEqual(encode_program(parse_program(text)), expected)
 
 
 if __name__ == "__main__":

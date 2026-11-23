@@ -3,9 +3,10 @@ import sys
 from dataclasses import dataclass
 
 from cli import make_parser, require_file, require_output
+from encoding import encode, encode_program
 from errors import ConfigError, UvmError
-from files import read_text
-from formats import format_fields
+from files import read_text, write_bytes
+from formats import format_bytes
 from syntax import parse_program
 
 EXIT_OK = 0
@@ -40,13 +41,14 @@ def parse_args(argv=None):
 
 
 def run(config):
-    """Работа этапа 1: перевод программы в промежуточное представление."""
+    """Работа этапа 2: машинный код, файл, размер файла."""
     commands = parse_program(read_text(config.source))
+    data = encode_program(commands)
     if config.test:
         for command in commands:
-            print(format_fields(command))
-    else:
-        print(f"Оттранслировано команд: {len(commands)}")
+            print(format_bytes(encode(command)))
+    write_bytes(config.output, data)
+    print(f"Размер двоичного файла: {len(data)} байт")
 
 
 def main(argv=None):
