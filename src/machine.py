@@ -2,7 +2,8 @@
 from encoding import decode
 from errors import VmError
 from memory import Memory
-from spec import COMMAND_SIZE, OP_LOAD, OP_READ, OP_WRITE, operand_limit
+from spec import (COMMAND_SIZE, OP_LOAD, OP_MAX, OP_READ, OP_WRITE,
+                  operand_limit)
 
 
 class Machine:
@@ -24,6 +25,7 @@ class Machine:
             OP_LOAD: self.op_load,
             OP_READ: self.op_read,
             OP_WRITE: self.op_write,
+            OP_MAX: self.op_max,
         }
 
     def fetch(self):
@@ -48,6 +50,10 @@ class Machine:
     def op_write(self, operand):
         """Запись значения в память: mem[B] = acc."""
         self.memory.write(operand, self.acc)
+
+    def op_max(self, operand):
+        """Бинарная операция: acc = max(acc, mem[B])."""
+        self.acc = max(self.acc, self.memory.read(operand))
 
     def execute(self, command):
         """Выполняет одну команду в промежуточном представлении."""

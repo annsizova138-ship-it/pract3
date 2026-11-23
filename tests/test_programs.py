@@ -33,6 +33,12 @@ class ProgramTests(unittest.TestCase):
         self.assertEqual(values(machine, 200, 5), [11, 22, 33, 44, 55])
         self.assertEqual(values(machine, 210, 5), [11, 22, 33, 44, 55])
 
+    def test_max_demo(self):
+        """Результаты max() сохранены в память."""
+        machine = run_example("max_demo.asm")
+        self.assertEqual(values(machine, 300, 3), [7, 19, 3])
+        self.assertEqual(values(machine, 310, 4), [19, 19, 100, 19])
+
 
 if __name__ == "__main__":
     unittest.main()

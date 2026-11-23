@@ -1,4 +1,4 @@
-"""Тесты интерпретатора: загрузка константы, чтение и запись памяти."""
+"""Тесты интерпретатора: загрузка, память, операция max()."""
 import unittest
 
 from encoding import encode_program
@@ -45,6 +45,33 @@ class MachineTests(unittest.TestCase):
         """Размер программы не кратен 5 - ошибка."""
         with self.assertRaises(VmError):
             Machine(b"\x2c\x00\x00")
+
+    def test_max_memory_larger(self):
+        """max(): в памяти значение больше аккумулятора."""
+        machine = run_program(
+            Command(44, 30), Command(174, 400),
+            Command(44, 10), Command(169, 400))
+        self.assertEqual(machine.acc, 30)
+
+    def test_max_accumulator_larger(self):
+        """max(): аккумулятор больше значения в памяти."""
+        machine = run_program(
+            Command(44, 5), Command(174, 400),
+            Command(44, 50), Command(169, 400))
+        self.assertEqual(machine.acc, 50)
+
+    def test_max_with_empty_cell(self):
+        """max(): ячейка без записи равна нулю."""
+        machine = run_program(Command(44, 8), Command(169, 777))
+        self.assertEqual(machine.acc, 8)
+
+    def test_max_large_values(self):
+        """max(): работает с наибольшей 31-битной константой."""
+        top = 2**31 - 1
+        machine = run_program(
+            Command(44, top), Command(174, 400),
+            Command(44, 1), Command(169, 400))
+        self.assertEqual(machine.acc, top)
 
     def test_unknown_command(self):
         """Неизвестный код команды - ошибка."""
