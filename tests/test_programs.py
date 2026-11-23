@@ -39,6 +39,18 @@ class ProgramTests(unittest.TestCase):
         self.assertEqual(values(machine, 300, 3), [7, 19, 3])
         self.assertEqual(values(machine, 310, 4), [19, 19, 100, 19])
 
+    def test_vector_max_examples(self):
+        """Вектор длины 6 после поэлементного max() с числом 14."""
+        cases = {
+            "vector_max_1.asm": [14, 14, 14, 14, 14, 14],
+            "vector_max_2.asm": [20, 14, 14, 100, 14, 15],
+            "vector_max_3.asm": [14, 14, 15, 2000000000, 14, 14],
+        }
+        for name, expected in cases.items():
+            with self.subTest(name):
+                machine = run_example(name)
+                self.assertEqual(values(machine, 400, 6), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
